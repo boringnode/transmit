@@ -1,0 +1,17 @@
+# Build
+build
+
+# Node & Dependencies
+node_modules
+coverage
+package-lock.json
+pnpm-lock.yaml
+
+# Build tools specific
+npm-debug.log
+yarn-error.log
+
+# Editors specific
+.fleet
+.idea
+.vscode

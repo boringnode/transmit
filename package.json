@@ -1,0 +1,97 @@
+{
+  "name": "@boringnode/transmit",
+  "description": "A framework agnostic Server-Sent-Event library",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "main": "build/index.js",
+  "type": "module",
+  "files": [
+    "build"
+  ],
+  "exports": {
+    ".": "./build/index.js",
+    "./transports": "./build/transports.js",
+    "./types": "./build/src/types/main.js"
+  },
+  "scripts": {
+    "build": "pnpm compile",
+    "clean": "del-cli build",
+    "compile": "pnpm clean && tsc",
+    "format": "prettier --write .",
+    "lint": "eslint . --ext=.ts",
+    "precompile": "pnpm lint",
+    "prepublishOnly": "pnpm build",
+    "pretest": "pnpm lint",
+    "quick:test": "node --enable-source-maps --loader=ts-node/esm bin/test.ts",
+    "release": "release-it",
+    "test": "c8 pnpm quick:test",
+    "typecheck": "tsc --noEmit",
+    "version": "npm run build"
+  },
+  "dependencies": {
+    "@boringnode/bus": "^0.6.0",
+    "@poppinss/utils": "^6.7.3",
+    "emittery": "^1.0.3",
+    "matchit": "^1.1.0"
+  },
+  "devDependencies": {
+    "@adonisjs/eslint-config": "^1.3.0",
+    "@adonisjs/prettier-config": "^1.3.0",
+    "@adonisjs/tsconfig": "^1.3.0",
+    "@japa/assert": "^3.0.0",
+    "@japa/runner": "^3.1.4",
+    "@swc/core": "^1.6.13",
+    "@types/node": "^20.14.10",
+    "c8": "^10.1.2",
+    "del-cli": "^5.1.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.2",
+    "release-it": "^17.5.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3"
+  },
+  "author": "Romain Lanz <romain.lanz@pm.me>",
+  "license": "MIT",
+  "keywords": [
+    "sse",
+    "server-sent-event",
+    "realtime",
+    "real-time"
+  ],
+  "eslintConfig": {
+    "extends": "@adonisjs/eslint-config/package"
+  },
+  "prettier": "@adonisjs/prettier-config",
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): ${version}",
+      "tagAnnotation": "v${version}",
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "v${version}",
+      "web": true
+    }
+  },
+  "c8": {
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "exclude": [
+      "tests/**"
+    ]
+  },
+  "volta": {
+    "node": "20.11.1"
+  },
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
+}

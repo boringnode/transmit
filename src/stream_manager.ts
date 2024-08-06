@@ -9,7 +9,10 @@ import { Stream } from './stream.js'
 import { Storage } from './storage.js'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
-type AccessCallback = <T>(context: T, params?: any) => Promise<boolean> | boolean
+export type AccessCallback<T extends unknown, U extends Record<string, string>> = (
+  context: T,
+  params: U
+) => Promise<boolean> | boolean
 
 interface OnConnectParams<T> {
   uid: string
@@ -59,7 +62,7 @@ export interface UnsubscribeParams<T> {
 export class StreamManager {
   #storage: Storage
 
-  #securedChannels = new Map<string, AccessCallback>()
+  #securedChannels = new Map<string, AccessCallback<any, any>>()
 
   constructor() {
     this.#storage = new Storage()
@@ -108,7 +111,10 @@ export class StreamManager {
     return true
   }
 
-  authorize(channel: string, callback: AccessCallback) {
+  authorize<T extends unknown, U extends Record<string, string>>(
+    channel: string,
+    callback: AccessCallback<T, U>
+  ) {
     this.#storage.secure(channel)
     this.#securedChannels.set(channel, callback)
   }

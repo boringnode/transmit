@@ -5,6 +5,7 @@
  * @copyright Boring Node
  */
 
+import { clearInterval } from 'node:timers'
 import Emittery from 'emittery'
 import { Bus } from '@boringnode/bus'
 import string from '@poppinss/utils/string'
@@ -12,8 +13,12 @@ import { StreamManager } from './stream_manager.js'
 import { TransportMessageType } from './transport_message_type.js'
 import type { Transport } from '@boringnode/bus/types/main'
 import type { Broadcastable, TransmitConfig } from './types/main.js'
-import type { CreateStreamParams, SubscribeParams, UnsubscribeParams } from './stream_manager.js'
-import { clearInterval } from 'node:timers'
+import type {
+  AccessCallback,
+  CreateStreamParams,
+  SubscribeParams,
+  UnsubscribeParams,
+} from './stream_manager.js'
 
 export interface TransmitLifecycleHooks<T> {
   connect: { uid: string; context: T }
@@ -124,6 +129,13 @@ export class Transmit {
         })
       },
     })
+  }
+
+  authorize<T extends unknown, U extends Record<string, string>>(
+    channel: string,
+    callback: AccessCallback<T, U>
+  ) {
+    this.#manager.authorize(channel, callback)
   }
 
   subscribe<T>(params: Omit<SubscribeParams<T>, 'onSubscribe'>) {

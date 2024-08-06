@@ -22,6 +22,91 @@ test.group('Transmit', () => {
     assert.instanceOf(transmit.getManager(), StreamManager)
   })
 
+  test('should call the authorization callback', async ({ assert }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+
+    const uid = randomUUID()
+    let authorized = false
+
+    transmit.authorize('channel1', () => {
+      authorized = true
+      return true
+    })
+
+    await transmit.subscribe({ channel: 'channel1', uid })
+
+    assert.isTrue(authorized)
+  })
+
+  test('should call the authorization callback with the context', async ({ assert }) => {
+    assert.plan(1)
+
+    const transmit = new Transmit({
+      transport: null,
+    })
+
+    const uid = randomUUID()
+
+    transmit.authorize('channel1', (context) => {
+      assert.equal(context, 'foo')
+      return true
+    })
+
+    await transmit.subscribe({ channel: 'channel1', uid, context: 'foo' })
+  })
+
+  test('should authorize the subscription', async ({ assert }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+
+    const uid = randomUUID()
+
+    transmit.authorize('channel1', () => {
+      return true
+    })
+
+    const authorized = await transmit.subscribe({ channel: 'channel1', uid })
+
+    assert.isTrue(authorized)
+  })
+
+  test('should not authorize the subscription', async ({ assert }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+
+    const uid = randomUUID()
+
+    transmit.authorize('channel1', () => {
+      return false
+    })
+
+    const authorized = await transmit.subscribe({ channel: 'channel1', uid })
+
+    assert.isFalse(authorized)
+  })
+
+  test('should authorize with channel params', async ({ assert }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+
+    const uid = randomUUID()
+
+    transmit.authorize<any, { id: string }>('channel/:id', (_context, params) => {
+      return params.id === '1'
+    })
+
+    const authorized = await transmit.subscribe({ channel: 'channel/1', uid })
+    const refused = await transmit.subscribe({ channel: 'channel/2', uid })
+
+    assert.isTrue(authorized)
+    assert.isFalse(refused)
+  })
+
   test('should emit an connect event', async ({ assert }, done) => {
     assert.plan(2)
 

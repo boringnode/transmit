@@ -8,11 +8,7 @@
 import { Stream } from './stream.js'
 import { Storage } from './storage.js'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-
-export type AccessCallback<T extends unknown, U extends Record<string, string>> = (
-  context: T,
-  params: U
-) => Promise<boolean> | boolean
+import type { AccessCallback } from './types/main.js'
 
 interface OnConnectParams<T> {
   uid: string

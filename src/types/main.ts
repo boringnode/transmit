@@ -41,3 +41,8 @@ export interface TransmitConfig {
     channel?: string
   }
 }
+
+export type AccessCallback<T extends unknown, U extends Record<string, string>> = (
+  context: T,
+  params: U
+) => Promise<boolean> | boolean

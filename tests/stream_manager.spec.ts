@@ -25,6 +25,7 @@ test.group('StreamManager', () => {
       uid: randomUUID(),
       request,
       response,
+      context: {},
       onConnect() {
         channelConnected = true
       },
@@ -46,6 +47,7 @@ test.group('StreamManager', () => {
       uid: randomUUID(),
       request,
       response,
+      context: {},
       onDisconnect() {
         channelDisconnected = true
       },
@@ -172,6 +174,7 @@ test.group('StreamManager', () => {
       uid: randomUUID(),
       request: request1,
       response: response1,
+      context: {},
     })
 
     const socket2 = new Socket()
@@ -181,6 +184,7 @@ test.group('StreamManager', () => {
       uid: randomUUID(),
       request: request2,
       response: response2,
+      context: {},
     })
 
     await manager.subscribe({ uid: stream1.getUid(), channel: 'foo' })
@@ -201,6 +205,7 @@ test.group('StreamManager', () => {
       uid: randomUUID(),
       request: request1,
       response: response1,
+      context: {},
     })
 
     const socket2 = new Socket()
@@ -210,6 +215,7 @@ test.group('StreamManager', () => {
       uid: randomUUID(),
       request: request2,
       response: response2,
+      context: {},
     })
 
     await manager.subscribe({ uid: stream1.getUid(), channel: 'foo' })

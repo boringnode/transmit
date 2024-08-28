@@ -42,7 +42,7 @@ export interface TransmitConfig {
   }
 }
 
-export type AccessCallback<T extends unknown, U extends Record<string, string>> = (
-  context: T,
-  params: U
+export type AccessCallback<Context extends unknown, Params extends Record<string, string>> = (
+  context: Context,
+  params: Params
 ) => Promise<boolean> | boolean

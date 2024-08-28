@@ -10,52 +10,53 @@ import { Storage } from './storage.js'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { AccessCallback } from './types/main.js'
 
-interface OnConnectParams<T> {
+interface OnConnectParams<Context> {
   uid: string
-  context?: T
+  context?: Context
 }
 
-interface OnDisconnectParams<T> {
+interface OnDisconnectParams<Context> {
   uid: string
-  context?: T
+  context?: Context
 }
 
-interface OnSubscribeParams<T> {
-  uid: string
-  channel: string
-  context?: T
-}
-
-interface OnUnsubscribeParams<T> {
+interface OnSubscribeParams<Context> {
   uid: string
   channel: string
-  context?: T
+  context: Context
 }
 
-export interface CreateStreamParams<T> {
+interface OnUnsubscribeParams<Context> {
+  uid: string
+  channel: string
+  context: Context
+}
+
+export interface CreateStreamParams<Context> {
   uid: string
   request: IncomingMessage
   response: ServerResponse
-  context?: T
-  onConnect?: (params: OnConnectParams<T>) => void
-  onDisconnect?: (params: OnDisconnectParams<T>) => void
+  context: Context
+  onConnect?: (params: OnConnectParams<Context>) => void
+  onDisconnect?: (params: OnDisconnectParams<Context>) => void
 }
 
-export interface SubscribeParams<T> {
+export interface SubscribeParams<Context> {
   uid: string
   channel: string
-  context?: T
-  onSubscribe?: (params: OnSubscribeParams<T>) => void
+  context?: Context
+  skipAuthorization?: boolean
+  onSubscribe?: (params: OnSubscribeParams<Context>) => void
 }
 
-export interface UnsubscribeParams<T> {
+export interface UnsubscribeParams<Context> {
   uid: string
   channel: string
-  context?: T
-  onUnsubscribe?: (params: OnUnsubscribeParams<T>) => void
+  context?: Context
+  onUnsubscribe?: (params: OnUnsubscribeParams<Context>) => void
 }
 
-export class StreamManager {
+export class StreamManager<Context extends unknown> {
   #storage: Storage
 
   #securedChannels = new Map<string, AccessCallback<any, any>>()
@@ -64,14 +65,14 @@ export class StreamManager {
     this.#storage = new Storage()
   }
 
-  createStream<T>({
+  createStream({
     uid,
     context,
     request,
     response,
     onConnect,
     onDisconnect,
-  }: CreateStreamParams<T>) {
+  }: CreateStreamParams<Context>) {
     const stream = new Stream(uid, request)
     stream.pipe(response, undefined, response.getHeaders())
 
@@ -87,35 +88,43 @@ export class StreamManager {
     return stream
   }
 
-  async subscribe<T>({ uid, channel, context, onSubscribe }: SubscribeParams<T>) {
-    const canAccessChannel = await this.verifyAccess(channel, context)
+  async subscribe({
+    uid,
+    channel,
+    context,
+    skipAuthorization = false,
+    onSubscribe,
+  }: SubscribeParams<Context>) {
+    if (!skipAuthorization) {
+      const canAccessChannel = await this.verifyAccess(channel, context!)
 
-    if (!canAccessChannel) {
-      return false
+      if (!canAccessChannel) {
+        return false
+      }
     }
 
     this.#storage.subscribe(uid, channel)
-    onSubscribe?.({ uid, channel, context })
+    onSubscribe?.({ uid, channel, context: context! })
 
     return true
   }
 
-  async unsubscribe<T>({ uid, channel, context, onUnsubscribe }: UnsubscribeParams<T>) {
+  async unsubscribe({ uid, channel, context, onUnsubscribe }: UnsubscribeParams<Context>) {
     this.#storage.unsubscribe(uid, channel)
-    onUnsubscribe?.({ uid, channel, context })
+    onUnsubscribe?.({ uid, channel, context: context! })
 
     return true
   }
 
-  authorize<T extends unknown, U extends Record<string, string>>(
+  authorize<Params extends Record<string, string>>(
     channel: string,
-    callback: AccessCallback<T, U>
+    callback: AccessCallback<Context, Params>
   ) {
     this.#storage.secure(channel)
     this.#securedChannels.set(channel, callback)
   }
 
-  async verifyAccess<T>(channel: string, context: T) {
+  async verifyAccess(channel: string, context: Context) {
     const definitions = this.#storage.getSecuredChannelDefinition(channel)
 
     if (!definitions) {

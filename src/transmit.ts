@@ -15,12 +15,12 @@ import type { Transport } from '@boringnode/bus/types/main'
 import type { AccessCallback, Broadcastable, TransmitConfig } from './types/main.js'
 import type { CreateStreamParams, SubscribeParams, UnsubscribeParams } from './stream_manager.js'
 
-export interface TransmitLifecycleHooks<T> {
-  connect: { uid: string; context: T }
-  disconnect: { uid: string; context: T }
+export interface TransmitLifecycleHooks<Context> {
+  connect: { uid: string; context: Context }
+  disconnect: { uid: string; context: Context }
   broadcast: { channel: string; payload: Broadcastable }
-  subscribe: { uid: string; channel: string; context: T }
-  unsubscribe: { uid: string; channel: string; context: T }
+  subscribe: { uid: string; channel: string; context: Context }
+  unsubscribe: { uid: string; channel: string; context: Context }
 }
 
 type TransmitMessage =
@@ -40,7 +40,7 @@ type TransmitMessage =
       payload: { uid: string }
     }
 
-export class Transmit {
+export class Transmit<Context extends unknown> {
   /**
    * The configuration for the transmit instance
    */
@@ -49,7 +49,7 @@ export class Transmit {
   /**
    * The stream manager instance
    */
-  readonly #manager: StreamManager
+  readonly #manager: StreamManager<Context>
 
   /**
    * The transport channel to synchronize messages and subscriptions
@@ -66,7 +66,7 @@ export class Transmit {
   /**
    * The emittery instance to emit events.
    */
-  #emittery: Emittery<TransmitLifecycleHooks<any>>
+  #emittery: Emittery<TransmitLifecycleHooks<Context>>
 
   /**
    * The interval to send ping messages to all the subscribers.
@@ -75,7 +75,7 @@ export class Transmit {
 
   constructor(config: TransmitConfig, transport?: Transport | null) {
     this.#config = config
-    this.#manager = new StreamManager()
+    this.#manager = new StreamManager<Context>()
     this.#emittery = new Emittery()
     this.#bus = transport ? new Bus(transport, { retryQueue: { enabled: true } }) : null
     this.#transportChannel = this.#config.transport?.channel ?? 'transmit::broadcast'
@@ -87,9 +87,9 @@ export class Transmit {
       if (type === TransportMessageType.Broadcast) {
         void this.#broadcastLocally(channel, payload)
       } else if (type === TransportMessageType.Subscribe) {
-        void this.#manager.subscribe({ uid: payload.uid, channel })
+        void this.#subscribeLocally({ uid: payload.uid, channel })
       } else if (type === TransportMessageType.Unsubscribe) {
-        void this.#manager.unsubscribe({ uid: payload.uid, channel })
+        void this.#unsubscribeLocally({ uid: payload.uid, channel })
       }
     })
 
@@ -108,7 +108,7 @@ export class Transmit {
     return this.#manager
   }
 
-  createStream<T>(params: Omit<CreateStreamParams<T>, 'onConnect' | 'onDisconnect'>) {
+  createStream(params: Omit<CreateStreamParams<Context>, 'onConnect' | 'onDisconnect'>) {
     return this.#manager.createStream({
       ...params,
       onConnect: () => {
@@ -126,15 +126,22 @@ export class Transmit {
     })
   }
 
-  authorize<T extends unknown, U extends Record<string, string>>(
+  authorize<Params extends Record<string, string>>(
     channel: string,
-    callback: AccessCallback<T, U>
+    callback: AccessCallback<Context, Params>
   ) {
     this.#manager.authorize(channel, callback)
   }
 
-  subscribe<T>(params: Omit<SubscribeParams<T>, 'onSubscribe'>) {
-    return this.#manager.subscribe<T>({
+  #subscribeLocally(params: Omit<SubscribeParams<Context>, 'onSubscribe'>) {
+    return this.#manager.subscribe({
+      ...params,
+      skipAuthorization: true,
+    })
+  }
+
+  subscribe(params: Omit<SubscribeParams<Context>, 'onSubscribe'>) {
+    return this.#manager.subscribe({
       ...params,
       onSubscribe: ({ uid, channel, context }) => {
         void this.#emittery.emit('subscribe', {
@@ -152,8 +159,14 @@ export class Transmit {
     })
   }
 
-  unsubscribe<T>(params: Omit<UnsubscribeParams<T>, 'onUnsubscribe'>) {
-    return this.#manager.unsubscribe<T>({
+  #unsubscribeLocally(params: Omit<UnsubscribeParams<Context>, 'onUnsubscribe'>) {
+    return this.#manager.unsubscribe({
+      ...params,
+    })
+  }
+
+  unsubscribe(params: Omit<UnsubscribeParams<Context>, 'onUnsubscribe'>) {
+    return this.#manager.unsubscribe({
       ...params,
       onUnsubscribe: ({ uid, channel, context }) => {
         void this.#emittery.emit('unsubscribe', {
@@ -207,9 +220,9 @@ export class Transmit {
     void this.#emittery.emit('broadcast', { channel, payload })
   }
 
-  on<T extends keyof TransmitLifecycleHooks<C>, C>(
+  on<T extends keyof TransmitLifecycleHooks<Context>>(
     event: T,
-    callback: (payload: TransmitLifecycleHooks<C>[T]) => void
+    callback: (payload: TransmitLifecycleHooks<Context>[T]) => void
   ) {
     return this.#emittery.on(event, callback)
   }

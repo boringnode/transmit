@@ -96,7 +96,7 @@ test.group('Transmit', () => {
 
     const uid = randomUUID()
 
-    transmit.authorize<any, { id: string }>('channel/:id', (_context, params) => {
+    transmit.authorize<{ id: string }>('channel/:id', (_context, params) => {
       return params.id === '1'
     })
 
@@ -219,7 +219,7 @@ test.group('Transmit', () => {
 
     const stream = makeStream(transmit, randomUUID())
 
-    stream.on('data', (message) => {
+    stream.on('data', (message: any) => {
       //? Ignore the first message
       if (message === '\n') return
 
@@ -244,7 +244,7 @@ test.group('Transmit', () => {
     })
 
     let dataReceived = false
-    stream.on('data', (message) => {
+    stream.on('data', (message: any) => {
       //? Ignore the first message
       if (message === '\n') return
 
@@ -283,7 +283,7 @@ test.group('Transmit', () => {
     })
 
     let dataReceived = false
-    stream.on('data', (message) => {
+    stream.on('data', (message: any) => {
       //? Ignore the first message
       if (message === '\n') return
 

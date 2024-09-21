@@ -37,6 +37,7 @@ export interface CreateStreamParams<Context> {
   request: IncomingMessage
   response: ServerResponse
   context: Context
+  injectResponseHeaders?: Record<string, any>
   onConnect?: (params: OnConnectParams<Context>) => void
   onDisconnect?: (params: OnDisconnectParams<Context>) => void
 }
@@ -70,11 +71,12 @@ export class StreamManager<Context extends unknown> {
     context,
     request,
     response,
+    injectResponseHeaders,
     onConnect,
     onDisconnect,
   }: CreateStreamParams<Context>) {
     const stream = new Stream(uid, request)
-    stream.pipe(response, undefined, response.getHeaders())
+    stream.pipe(response, undefined, injectResponseHeaders)
 
     this.#storage.add(stream)
 

@@ -16,19 +16,19 @@
     "./types": "./build/src/types/main.js"
   },
   "scripts": {
-    "build": "npm run compile",
+    "build": "yarn compile",
     "clean": "del-cli build",
-    "compile": "npm run clean && tsc",
+    "compile": "yarn clean && tsc",
     "format": "prettier --write .",
     "lint": "eslint . --ext=.ts",
-    "precompile": "npm run lint",
-    "prepublishOnly": "npm run build",
-    "pretest": "npm run lint",
-    "quick:test": "node --enable-source-maps --import=ts-node-maintained/register/esm bin/test.ts",
+    "precompile": "yarn lint",
+    "prepublishOnly": "yarn build",
+    "pretest": "yarn lint",
+    "quick:test": "yarn node --enable-source-maps --import=ts-node-maintained/register/esm bin/test.ts",
     "release": "release-it",
-    "test": "c8 npm run quick:test",
+    "test": "c8 yarn quick:test",
     "typecheck": "tsc --noEmit",
-    "version": "npm run build"
+    "version": "yarn build"
   },
   "dependencies": {
     "@boringnode/bus": "^0.7.0",
@@ -93,5 +93,5 @@
   "volta": {
     "node": "20.11.1"
   },
-  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
+  "packageManager": "yarn@4.5.3+sha512.3003a14012e2987072d244c720506549c1aab73ee728208f1b2580a9fd67b92d61ba6b08fe93f6dce68fd771e3af1e59a0afa28dd242dd0940d73b95fedd4e90"
 }

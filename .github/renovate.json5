@@ -9,4 +9,9 @@
       enabled: false,
     },
   ],
+  ignoreDeps: [
+    // manually bumping
+    "node",
+    "@types/node"
+  ],
 }

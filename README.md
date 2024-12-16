@@ -233,7 +233,7 @@ fastify.listen({ port: 3000 })
 
 ## Avoiding GZip Interference
 
-When deploying applications that use `@adonisjs/transmit`, it’s important to ensure that GZip compression does not interfere with the `text/event-stream` content type used by Server-Sent Events (SSE). Compression applied to `text/event-stream` can cause connection issues, leading to frequent disconnects or SSE failures.
+When deploying applications that use `@boringnode/transmit`, it’s important to ensure that GZip compression does not interfere with the `text/event-stream` content type used by Server-Sent Events (SSE). Compression applied to `text/event-stream` can cause connection issues, leading to frequent disconnects or SSE failures.
 
 If your deployment uses a reverse proxy (such as Traefik or Nginx) or other middleware that applies GZip, ensure that compression is disabled for the `text/event-stream` content type.
 
@@ -246,7 +246,7 @@ traefik.http.routers.my-router.middlewares=gzip
 ```
 
 
-[gh-workflow-image]: https://img.shields.io/github/actions/workflow/status/boringnode/transmit/checks.yml?branch=main&style=for-the-badge
+[gh-workflow-image]: https://img.shields.io/github/actions/workflow/status/boringnode/transmit/checks.yml?branch=0.x&style=for-the-badge
 [gh-workflow-url]: https://github.com/boringnode/transmit/actions/workflows/checks.yml
 [npm-image]: https://img.shields.io/npm/v/@boringnode/transmit.svg?style=for-the-badge&logo=npm
 [npm-url]: https://www.npmjs.com/package/@boringnode/transmit

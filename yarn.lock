@@ -5,9 +5,9 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@adonisjs/eslint-config@npm:^2.0.0-beta.7":
-  version: 2.0.0-beta.7
-  resolution: "@adonisjs/eslint-config@npm:2.0.0-beta.7"
+"@adonisjs/eslint-config@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@adonisjs/eslint-config@npm:2.0.0"
   dependencies:
     "@adonisjs/eslint-plugin": "npm:^2.0.0-beta.5"
     "@stylistic/eslint-plugin-ts": "npm:^2.7.2"
@@ -18,7 +18,7 @@ __metadata:
   peerDependencies:
     eslint: ^9.9.0
     prettier: ^3.3.3
-  checksum: 10c0/b18e3daf81b7afbd91f12f2fb8e01fe4b254d948ec0ac0d63b39bba604eaf8b7c3ad01a8eccf8b22424f2d31feab5108db385cb247f1b138e8a7510bfe5e3cb0
+  checksum: 10c0/f7edb6a017426d9bcd97fb95e91b68d6b532f3e3ce54f782c861dbf6e98ab845e0ed375859b3c317762fa3b89932aab3165d37a33044c39449493ea6e22416d4
   languageName: node
   linkType: hard
 
@@ -101,21 +101,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@boringnode/transmit@workspace:."
   dependencies:
-    "@adonisjs/eslint-config": "npm:^2.0.0-beta.7"
+    "@adonisjs/eslint-config": "npm:^2.0.0"
     "@adonisjs/prettier-config": "npm:^1.4.0"
     "@adonisjs/tsconfig": "npm:^1.4.0"
     "@boringnode/bus": "npm:^0.7.0"
     "@japa/assert": "npm:^4.0.1"
     "@japa/runner": "npm:^4.2.0"
     "@poppinss/utils": "npm:^6.9.2"
-    "@swc/core": "npm:^1.10.12"
+    "@swc/core": "npm:^1.10.16"
     "@types/node": "npm:^20.16.10"
     c8: "npm:^10.1.3"
     del-cli: "npm:^6.0.0"
     emittery: "npm:^1.1.0"
-    eslint: "npm:^9.19.0"
+    eslint: "npm:^9.20.1"
     matchit: "npm:^1.1.0"
-    prettier: "npm:^3.4.2"
+    prettier: "npm:^3.5.1"
     release-it: "npm:^18.1.2"
     ts-node-maintained: "npm:^10.9.5"
     tsup: "npm:^8.3.6"
@@ -380,6 +380,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/core@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@eslint/core@npm:0.11.0"
+  dependencies:
+    "@types/json-schema": "npm:^7.0.15"
+  checksum: 10c0/1e0671d035c908175f445864a7864cf6c6a8b67a5dfba8c47b2ac91e2d3ed36e8c1f2fd81d98a73264f8677055559699d4adb0f97d86588e616fc0dc9a4b86c9
+  languageName: node
+  linkType: hard
+
 "@eslint/eslintrc@npm:^3.2.0":
   version: 3.2.0
   resolution: "@eslint/eslintrc@npm:3.2.0"
@@ -397,10 +406,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.19.0":
-  version: 9.19.0
-  resolution: "@eslint/js@npm:9.19.0"
-  checksum: 10c0/45dc544c8803984f80a438b47a8e578fae4f6e15bc8478a703827aaf05e21380b42a43560374ce4dad0d5cb6349e17430fc9ce1686fed2efe5d1ff117939ff90
+"@eslint/js@npm:9.20.0":
+  version: 9.20.0
+  resolution: "@eslint/js@npm:9.20.0"
+  checksum: 10c0/10e7b5b9e628b5192e8fc6b0ecd27cf48322947e83e999ff60f9f9e44ac8d499138bcb9383cbfa6e51e780d53b4e76ccc2d1753b108b7173b8404fd484d37328
   languageName: node
   linkType: hard
 
@@ -1341,90 +1350,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-darwin-arm64@npm:1.10.12"
+"@swc/core-darwin-arm64@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-darwin-arm64@npm:1.10.16"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-darwin-x64@npm:1.10.12"
+"@swc/core-darwin-x64@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-darwin-x64@npm:1.10.16"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.10.12"
+"@swc/core-linux-arm-gnueabihf@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.10.16"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.10.12"
+"@swc/core-linux-arm64-gnu@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.10.16"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-linux-arm64-musl@npm:1.10.12"
+"@swc/core-linux-arm64-musl@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-linux-arm64-musl@npm:1.10.16"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-linux-x64-gnu@npm:1.10.12"
+"@swc/core-linux-x64-gnu@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-linux-x64-gnu@npm:1.10.16"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-linux-x64-musl@npm:1.10.12"
+"@swc/core-linux-x64-musl@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-linux-x64-musl@npm:1.10.16"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.10.12"
+"@swc/core-win32-arm64-msvc@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.10.16"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.10.12"
+"@swc/core-win32-ia32-msvc@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.10.16"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core-win32-x64-msvc@npm:1.10.12"
+"@swc/core-win32-x64-msvc@npm:1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core-win32-x64-msvc@npm:1.10.16"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.10.12":
-  version: 1.10.12
-  resolution: "@swc/core@npm:1.10.12"
+"@swc/core@npm:^1.10.16":
+  version: 1.10.16
+  resolution: "@swc/core@npm:1.10.16"
   dependencies:
-    "@swc/core-darwin-arm64": "npm:1.10.12"
-    "@swc/core-darwin-x64": "npm:1.10.12"
-    "@swc/core-linux-arm-gnueabihf": "npm:1.10.12"
-    "@swc/core-linux-arm64-gnu": "npm:1.10.12"
-    "@swc/core-linux-arm64-musl": "npm:1.10.12"
-    "@swc/core-linux-x64-gnu": "npm:1.10.12"
-    "@swc/core-linux-x64-musl": "npm:1.10.12"
-    "@swc/core-win32-arm64-msvc": "npm:1.10.12"
-    "@swc/core-win32-ia32-msvc": "npm:1.10.12"
-    "@swc/core-win32-x64-msvc": "npm:1.10.12"
+    "@swc/core-darwin-arm64": "npm:1.10.16"
+    "@swc/core-darwin-x64": "npm:1.10.16"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.10.16"
+    "@swc/core-linux-arm64-gnu": "npm:1.10.16"
+    "@swc/core-linux-arm64-musl": "npm:1.10.16"
+    "@swc/core-linux-x64-gnu": "npm:1.10.16"
+    "@swc/core-linux-x64-musl": "npm:1.10.16"
+    "@swc/core-win32-arm64-msvc": "npm:1.10.16"
+    "@swc/core-win32-ia32-msvc": "npm:1.10.16"
+    "@swc/core-win32-x64-msvc": "npm:1.10.16"
     "@swc/counter": "npm:^0.1.3"
     "@swc/types": "npm:^0.1.17"
   peerDependencies:
@@ -1453,7 +1462,7 @@ __metadata:
   peerDependenciesMeta:
     "@swc/helpers":
       optional: true
-  checksum: 10c0/ce46f64bd66d21dd1fea3afa7f82dcc28520ccac13f2b6c580d37b58b97a3b97281300bed24a20294d3dd4eeb2e50fb5a3e5d15a278aa80a9474e362c83fa5ff
+  checksum: 10c0/155f4a2db6e1342084fa205883a9628d34ee2c14e511125630f5531fead732de2c4569d40545cd7b8976072cfed0e5ddf5cd72067abd24ce81e237dd90d8ee69
   languageName: node
   linkType: hard
 
@@ -2780,16 +2789,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.19.0":
-  version: 9.19.0
-  resolution: "eslint@npm:9.19.0"
+"eslint@npm:^9.20.1":
+  version: 9.20.1
+  resolution: "eslint@npm:9.20.1"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.2.0"
     "@eslint-community/regexpp": "npm:^4.12.1"
     "@eslint/config-array": "npm:^0.19.0"
-    "@eslint/core": "npm:^0.10.0"
+    "@eslint/core": "npm:^0.11.0"
     "@eslint/eslintrc": "npm:^3.2.0"
-    "@eslint/js": "npm:9.19.0"
+    "@eslint/js": "npm:9.20.0"
     "@eslint/plugin-kit": "npm:^0.2.5"
     "@humanfs/node": "npm:^0.16.6"
     "@humanwhocodes/module-importer": "npm:^1.0.1"
@@ -2825,7 +2834,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/3b0dfaeff6a831de086884a3e2432f18468fe37c69f35e1a0a9a2833d9994a65b6dd2a524aaee28f361c849035ad9d15e3841029b67d261d0abd62c7de6d51f5
+  checksum: 10c0/056789dd5a00897730376f8c0a191e22840e97b7276916068ec096341cb2ec3a918c8bd474bf94ccd7b457ad9fbc16e5c521a993c7cc6ebcf241933e2fd378b0
   languageName: node
   linkType: hard
 
@@ -4827,6 +4836,15 @@ __metadata:
   bin:
     prettier: bin/prettier.cjs
   checksum: 10c0/99e076a26ed0aba4ebc043880d0f08bbb8c59a4c6641cdee6cdadf2205bdd87aa1d7823f50c3aea41e015e99878d37c58d7b5f0e663bba0ef047f94e36b96446
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "prettier@npm:3.5.1"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 10c0/9f6f810eae455d6e4213845151a484a2338f2e0d6a8b84ee8e13a83af8a2421ef6c1e31e61e4b135671fb57b9541f6624648880cc2061ac803e243ac898c0123
   languageName: node
   linkType: hard
 

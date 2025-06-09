@@ -398,4 +398,28 @@ test.group('Transmit', () => {
 
     assert.isTrue(dataReceived)
   })
+
+  test('should return all subscribers for a channel', async ({ assert }) => {
+    const transport = makeTransport()
+    const transmit = makeTransmitWithTransport(transport)
+
+    const stream1 = makeStream(transmit)
+    const stream2 = makeStream(transmit)
+
+    await transmit.subscribe({
+      uid: stream1.getUid(),
+      channel: 'channel1',
+    })
+
+    await transmit.subscribe({
+      uid: stream2.getUid(),
+      channel: 'channel1',
+    })
+
+    const uuids = transmit.getAllSubscribersUUIDs('channel1')
+
+    assert.lengthOf(uuids, 2)
+    assert.equal(uuids[0], stream1.getUid())
+    assert.equal(uuids[1], stream2.getUid())
+  })
 })

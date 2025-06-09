@@ -235,6 +235,12 @@ export class Transmit<Context extends unknown> {
     await this.#bus?.disconnect()
   }
 
+  getAllSubscribersUUIDs(channel: string) {
+    const subscribers = this.#manager.findByChannel(channel)
+    const uuids = Array.from(subscribers).map((subscriber) => subscriber.getUid())
+    return uuids
+  }
+
   #ping() {
     for (const [stream] of this.#manager.getAllSubscribers()) {
       stream.writeMessage({ data: { channel: '$$transmit/ping', payload: {} } })

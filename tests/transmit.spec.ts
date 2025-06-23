@@ -416,7 +416,7 @@ test.group('Transmit', () => {
       channel: 'channel1',
     })
 
-    const uuids = transmit.getAllSubscribersUUIDs('channel1')
+    const uuids = transmit.getSubscribersFor('channel1')
 
     assert.lengthOf(uuids, 2)
     assert.equal(uuids[0], stream1.getUid())

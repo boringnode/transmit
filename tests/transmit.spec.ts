@@ -398,4 +398,52 @@ test.group('Transmit', () => {
 
     assert.isTrue(dataReceived)
   })
+
+  test('should return all subscribers for a channel', async ({ assert }) => {
+    const transport = makeTransport()
+    const transmit = makeTransmitWithTransport(transport)
+
+    const stream1 = makeStream(transmit)
+    const stream2 = makeStream(transmit)
+    const stream3 = makeStream(transmit)
+    const stream4 = makeStream(transmit)
+    const stream5 = makeStream(transmit)
+
+    await transmit.subscribe({
+      uid: stream1.getUid(),
+      channel: 'channel1',
+    })
+
+    await transmit.subscribe({
+      uid: stream2.getUid(),
+      channel: 'channel1',
+    })
+
+    await transmit.subscribe({
+      uid: stream3.getUid(),
+      channel: 'channel2',
+    })
+
+    await transmit.subscribe({
+      uid: stream4.getUid(),
+      channel: 'channel2',
+    })
+
+    await transmit.subscribe({
+      uid: stream5.getUid(),
+      channel: 'channel2',
+    })
+
+    const uuidsChannel1 = transmit.getSubscribersFor('channel1')
+    const uuidsChannel2 = transmit.getSubscribersFor('channel2')
+
+    assert.lengthOf(uuidsChannel1, 2)
+    assert.equal(uuidsChannel1[0], stream1.getUid())
+    assert.equal(uuidsChannel1[1], stream2.getUid())
+
+    assert.lengthOf(uuidsChannel2, 3)
+    assert.equal(uuidsChannel2[0], stream3.getUid())
+    assert.equal(uuidsChannel2[1], stream4.getUid())
+    assert.equal(uuidsChannel2[2], stream5.getUid())
+  })
 })

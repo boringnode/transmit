@@ -1,7 +1,7 @@
 {
   "name": "@boringnode/transmit",
   "description": "A framework agnostic Server-Sent-Event library",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "engines": {
     "node": ">=20.6"
   },

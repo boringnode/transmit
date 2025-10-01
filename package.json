@@ -51,7 +51,7 @@
     "release-it": "^19.0.5",
     "ts-node-maintained": "^10.9.6",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "author": "Romain Lanz <romain.lanz@pm.me>",
   "license": "MIT",
@@ -90,5 +90,5 @@
   "volta": {
     "node": "20.11.1"
   },
-  "packageManager": "yarn@4.10.0"
+  "packageManager": "yarn@4.10.3"
 }

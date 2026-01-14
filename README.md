@@ -1,6 +1,4 @@
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/725d431b-760c-4f42-9b79-d522e963a0d7" alt="@boringnode/transmit">
-</div>
+# @boringnode/transmit
 
 <div align="center">
 

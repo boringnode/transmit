@@ -361,6 +361,35 @@ test.group('Transmit', () => {
     assert.isTrue(dataReceived)
   })
 
+  test('should broadcast falsy payloads without converting them to empty object', async ({
+    assert,
+  }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+
+    const stream = makeStream(transmit)
+
+    await transmit.subscribe({
+      uid: stream.getUid(),
+      channel: 'channel1',
+    })
+
+    const receivedPayloads: any[] = []
+    stream.on('data', (message: any) => {
+      if (message === '\n') return
+
+      const parsed = JSON.parse(message.replace('data: ', ''))
+      receivedPayloads.push(parsed.payload)
+    })
+
+    transmit.broadcast('channel1', 0)
+    transmit.broadcast('channel1', false)
+    transmit.broadcast('channel1', '')
+
+    assert.deepEqual(receivedPayloads, [0, false, ''])
+  })
+
   test('should return all subscribers for a channel', async ({ assert }) => {
     const transport = makeTransport()
     const transmit = makeTransmitWithTransport(transport)

@@ -161,8 +161,8 @@ export class Transmit<Context extends unknown> {
   }
 
   broadcast(channel: string, payload?: Broadcastable) {
-    if (!payload) {
-      payload = {}
+    if (payload === undefined) {
+      payload = null
     }
 
     void this.#bus?.publish(this.#transportChannel, {

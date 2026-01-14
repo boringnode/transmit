@@ -62,13 +62,13 @@ test.group('Transmit', () => {
       transport: null,
     })
 
-    const uid = randomUUID()
+    const stream = makeStream(transmit)
 
     transmit.authorize('channel1', () => {
       return true
     })
 
-    const authorized = await transmit.subscribe({ channel: 'channel1', uid })
+    const authorized = await transmit.subscribe({ channel: 'channel1', uid: stream.getUid() })
 
     assert.isTrue(authorized)
   })
@@ -94,14 +94,14 @@ test.group('Transmit', () => {
       transport: null,
     })
 
-    const uid = randomUUID()
+    const stream = makeStream(transmit)
 
     transmit.authorize<{ id: string }>('channel/:id', (_context, params) => {
       return params.id === '1'
     })
 
-    const authorized = await transmit.subscribe({ channel: 'channel/1', uid })
-    const refused = await transmit.subscribe({ channel: 'channel/2', uid })
+    const authorized = await transmit.subscribe({ channel: 'channel/1', uid: stream.getUid() })
+    const refused = await transmit.subscribe({ channel: 'channel/2', uid: stream.getUid() })
 
     assert.isTrue(authorized)
     assert.isFalse(refused)
@@ -138,18 +138,18 @@ test.group('Transmit', () => {
       transport: null,
     })
 
-    const uid = randomUUID()
+    const stream = makeStream(transmit)
     let subscribed = false
 
     transmit.on('subscribe', (params) => {
       subscribed = true
 
-      assert.equal(params.uid, uid)
+      assert.equal(params.uid, stream.getUid())
       assert.equal(params.channel, 'users/1')
     })
 
     await transmit.subscribe({
-      uid,
+      uid: stream.getUid(),
       channel: 'users/1',
     })
 

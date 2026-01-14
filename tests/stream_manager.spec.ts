@@ -110,9 +110,41 @@ test.group('StreamManager', () => {
   })
 
   test('should subscribe to a channel', async ({ assert }) => {
+    const socket = new Socket()
+    const manager = new StreamManager()
+    const request = new IncomingMessage(socket)
+    const response = new ServerResponse(request)
+
+    const stream = manager.createStream({
+      uid: randomUUID(),
+      request,
+      response,
+      context: {},
+    })
+
+    assert.isTrue(await manager.subscribe({ uid: stream.getUid(), channel: 'foo', context: {} }))
+  })
+
+  test('should return false when subscribing with non-existent uid', async ({ assert }) => {
     const manager = new StreamManager()
 
-    assert.isTrue(await manager.subscribe({ uid: randomUUID(), channel: 'foo', context: {} }))
+    assert.isFalse(await manager.subscribe({ uid: randomUUID(), channel: 'foo', context: {} }))
+  })
+
+  test('should not call onSubscribe when uid does not exist', async ({ assert }) => {
+    const manager = new StreamManager()
+    let subscribed = false
+
+    await manager.subscribe({
+      uid: randomUUID(),
+      channel: 'foo',
+      context: {},
+      onSubscribe() {
+        subscribed = true
+      },
+    })
+
+    assert.isFalse(subscribed)
   })
 
   test('should not subscribe to a channel if not authorized', async ({ assert }) => {
@@ -124,11 +156,21 @@ test.group('StreamManager', () => {
   })
 
   test('should call onSubscribe callback', async ({ assert }) => {
+    const socket = new Socket()
     const manager = new StreamManager()
+    const request = new IncomingMessage(socket)
+    const response = new ServerResponse(request)
     let subscribed = false
 
-    await manager.subscribe({
+    const stream = manager.createStream({
       uid: randomUUID(),
+      request,
+      response,
+      context: {},
+    })
+
+    await manager.subscribe({
+      uid: stream.getUid(),
       channel: 'foo',
       context: {},
       onSubscribe() {

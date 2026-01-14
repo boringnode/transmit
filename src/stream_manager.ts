@@ -105,7 +105,12 @@ export class StreamManager<Context extends unknown> {
       }
     }
 
-    this.#storage.subscribe(uid, channel)
+    const subscribed = this.#storage.subscribe(uid, channel)
+
+    if (!subscribed) {
+      return false
+    }
+
     onSubscribe?.({ uid, channel, context: context! })
 
     return true

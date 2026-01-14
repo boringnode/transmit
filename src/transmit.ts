@@ -23,22 +23,11 @@ export interface TransmitLifecycleHooks<Context> {
   unsubscribe: { uid: string; channel: string; context: Context }
 }
 
-type TransmitMessage =
-  | {
-      type: typeof TransportMessageType.Broadcast
-      channel: string
-      payload: Broadcastable
-    }
-  | {
-      type: typeof TransportMessageType.Subscribe
-      channel: string
-      payload: { uid: string }
-    }
-  | {
-      type: typeof TransportMessageType.Unsubscribe
-      channel: string
-      payload: { uid: string }
-    }
+type TransmitMessage = {
+  type: typeof TransportMessageType.Broadcast
+  channel: string
+  payload: Broadcastable
+}
 
 export class Transmit<Context extends unknown> {
   /**
@@ -82,15 +71,7 @@ export class Transmit<Context extends unknown> {
 
     // Subscribe to the transport channel and handle incoming messages
     void this.#bus?.subscribe<TransmitMessage>(this.#transportChannel, (message) => {
-      const { type, channel, payload } = message
-
-      if (type === TransportMessageType.Broadcast) {
-        void this.#broadcastLocally(channel, payload)
-      } else if (type === TransportMessageType.Subscribe) {
-        void this.#subscribeLocally({ uid: payload.uid, channel })
-      } else if (type === TransportMessageType.Unsubscribe) {
-        void this.#unsubscribeLocally({ uid: payload.uid, channel })
-      }
+      void this.#broadcastLocally(message.channel, message.payload)
     })
 
     // Start the ping interval if configured
@@ -133,13 +114,6 @@ export class Transmit<Context extends unknown> {
     this.#manager.authorize(channel, callback)
   }
 
-  #subscribeLocally(params: Omit<SubscribeParams<Context>, 'onSubscribe'>) {
-    return this.#manager.subscribe({
-      ...params,
-      skipAuthorization: true,
-    })
-  }
-
   subscribe(params: Omit<SubscribeParams<Context>, 'onSubscribe'>) {
     return this.#manager.subscribe({
       ...params,
@@ -149,19 +123,7 @@ export class Transmit<Context extends unknown> {
           channel,
           context,
         })
-
-        void this.#bus?.publish(this.#transportChannel, {
-          type: TransportMessageType.Subscribe,
-          channel,
-          payload: { uid },
-        })
       },
-    })
-  }
-
-  #unsubscribeLocally(params: Omit<UnsubscribeParams<Context>, 'onUnsubscribe'>) {
-    return this.#manager.unsubscribe({
-      ...params,
     })
   }
 
@@ -173,12 +135,6 @@ export class Transmit<Context extends unknown> {
           uid,
           channel,
           context,
-        })
-
-        void this.#bus?.publish(this.#transportChannel, {
-          type: TransportMessageType.Unsubscribe,
-          channel,
-          payload: { uid },
         })
       },
     })

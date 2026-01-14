@@ -315,44 +315,6 @@ test.group('Transmit', () => {
     assert.lengthOf(transport.transport.receivedMessages, 0)
   })
 
-  test('should broadcast to the bus when a client subscribe to a channel', async ({ assert }) => {
-    const transport = makeTransport()
-    const transmit = makeTransmitWithTransport(transport)
-    makeTransmitWithTransport(transport)
-
-    const stream = makeStream(transmit)
-
-    await transmit.subscribe({
-      uid: stream.getUid(),
-      channel: 'channel1',
-    })
-
-    assert.lengthOf(transport.transport.receivedMessages, 1)
-    assert.equal(transport.transport.receivedMessages[0].type, TransportMessageType.Subscribe)
-  })
-
-  test('should broadcast to the bus when a client unsubscribe a channel', async ({ assert }) => {
-    const transport = makeTransport()
-    const transmit = makeTransmitWithTransport(transport)
-
-    makeTransmitWithTransport(transport)
-
-    const stream = makeStream(transmit)
-
-    await transmit.subscribe({
-      uid: stream.getUid(),
-      channel: 'channel1',
-    })
-
-    await transmit.unsubscribe({
-      uid: stream.getUid(),
-      channel: 'channel1',
-    })
-
-    assert.lengthOf(transport.transport.receivedMessages, 2)
-    assert.equal(transport.transport.receivedMessages[1].type, TransportMessageType.Unsubscribe)
-  })
-
   test('should broadcast to the bus when sending a message', async ({ assert }) => {
     const transport = makeTransport()
     const transmit = makeTransmitWithTransport(transport)
@@ -367,8 +329,8 @@ test.group('Transmit', () => {
 
     transmit.broadcast('channel1', { message: 'hello' })
 
-    assert.lengthOf(transport.transport.receivedMessages, 2)
-    assert.equal(transport.transport.receivedMessages[1].type, TransportMessageType.Broadcast)
+    assert.lengthOf(transport.transport.receivedMessages, 1)
+    assert.equal(transport.transport.receivedMessages[0].type, TransportMessageType.Broadcast)
   })
 
   test('second instance should receive the broadcasted message', async ({ assert }) => {

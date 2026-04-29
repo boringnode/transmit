@@ -39,7 +39,7 @@
   "devDependencies": {
     "@adonisjs/eslint-config": "^2.1.2",
     "@adonisjs/prettier-config": "^1.4.5",
-    "@adonisjs/tsconfig": "^1.4.1",
+    "@adonisjs/tsconfig": "^2.0.0",
     "@japa/assert": "^4.2.0",
     "@japa/runner": "^5.3.0",
     "@swc/core": "^1.15.24",

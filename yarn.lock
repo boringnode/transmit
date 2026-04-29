@@ -49,10 +49,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adonisjs/tsconfig@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@adonisjs/tsconfig@npm:1.4.1"
-  checksum: 10c0/a610abd720f16a94a8173a71a08b2f72b6270c361fbd04374eda03bab05a04dce3fc2500ae941c7a458a44cf2db9b9cb6a6f52cded513d501ae885b4838a90a1
+"@adonisjs/tsconfig@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@adonisjs/tsconfig@npm:2.0.0"
+  checksum: 10c0/f4145bbde184bfaca669ac721f5b6f38b9a3c78b0f41577d511b1beadf11f47bfd54fef35acd15a0244bc5b94fd04da0819d7086843d36a0900dc58b8fdfc88b
   languageName: node
   linkType: hard
 
@@ -99,7 +99,7 @@ __metadata:
   dependencies:
     "@adonisjs/eslint-config": "npm:^2.1.2"
     "@adonisjs/prettier-config": "npm:^1.4.5"
-    "@adonisjs/tsconfig": "npm:^1.4.1"
+    "@adonisjs/tsconfig": "npm:^2.0.0"
     "@boringnode/bus": "npm:^0.9.0"
     "@japa/assert": "npm:^4.2.0"
     "@japa/runner": "npm:^5.3.0"

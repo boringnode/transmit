@@ -103,7 +103,7 @@ __metadata:
     "@boringnode/bus": "npm:^0.9.0"
     "@japa/assert": "npm:^4.2.0"
     "@japa/runner": "npm:^5.3.0"
-    "@poppinss/utils": "npm:^6.10.1"
+    "@poppinss/utils": "npm:^7.1.0"
     "@swc/core": "npm:^1.15.24"
     "@types/node": "npm:^20.16.10"
     c8: "npm:^10.1.3"
@@ -1241,6 +1241,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@poppinss/string@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "@poppinss/string@npm:1.7.2"
+  dependencies:
+    "@types/pluralize": "npm:^0.0.33"
+    case-anything: "npm:^3.1.2"
+    pluralize: "npm:^8.0.0"
+    slugify: "npm:^1.6.9"
+  checksum: 10c0/cb564770558abd15a1874826e719eefd86332c4db3090a673c50d95e8898e9b6b03c90109f4f920f857e5e570c5db0dbaeaf3bc81c930e9803369fbf0dacfd7a
+  languageName: node
+  linkType: hard
+
 "@poppinss/types@npm:^1.2.1":
   version: 1.2.1
   resolution: "@poppinss/types@npm:1.2.1"
@@ -1272,6 +1284,19 @@ __metadata:
     "@poppinss/types": "npm:^1.2.1"
     flattie: "npm:^1.1.1"
   checksum: 10c0/ba9a76feb5549c0b1c73c1c2a21c2ec94c75d8837bf36bf378e45ec443597c3455fc046abfdaa49055c938d096680aad2dbf5de6e3ee126dc9455bd34a841cab
+  languageName: node
+  linkType: hard
+
+"@poppinss/utils@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@poppinss/utils@npm:7.1.0"
+  dependencies:
+    "@poppinss/exception": "npm:^1.2.3"
+    "@poppinss/object-builder": "npm:^1.1.0"
+    "@poppinss/string": "npm:^1.7.2"
+    "@poppinss/types": "npm:^1.2.1"
+    flattie: "npm:^1.1.1"
+  checksum: 10c0/0671605952c3786e7565c33941ad2741f7d761415a75cf96e525521c09ca82b5ee11c44d5610f9dc08fd0f2412ef8794a1cb16d82e51512b0c3de7a8790bc213
   languageName: node
   linkType: hard
 
@@ -5077,6 +5102,13 @@ __metadata:
   version: 1.6.6
   resolution: "slugify@npm:1.6.6"
   checksum: 10c0/e7e63f08f389a371d6228bc19d64ec84360bf0a538333446cc49dbbf3971751a6d180d2f31551188dd007a65ca771e69f574e0283290a7825a818e90b75ef44d
+  languageName: node
+  linkType: hard
+
+"slugify@npm:^1.6.9":
+  version: 1.6.9
+  resolution: "slugify@npm:1.6.9"
+  checksum: 10c0/8473c566ae00c5db26bfbf6182a4a9478ab3c912a9c926e1fdb410736a77228bfca4fdc5c755b46fafa7d2d9900de482fd7a9bd5e5c91128c4743c2c072d88da
   languageName: node
   linkType: hard
 

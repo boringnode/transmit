@@ -62,6 +62,8 @@ export class StreamManager<Context extends unknown> {
 
   #responses = new Set<ServerResponse>()
 
+  #isClosed = false
+
   #securedChannels = new Map<string, AccessCallback<any, any>>()
 
   constructor() {
@@ -77,6 +79,13 @@ export class StreamManager<Context extends unknown> {
     onConnect,
     onDisconnect,
   }: CreateStreamParams<Context>) {
+    if (this.#isClosed) {
+      response.destroy()
+      const stream = new Stream(uid)
+      stream.destroy()
+      return stream
+    }
+
     const stream = new Stream(uid, request)
     stream.pipe(response, undefined, injectResponseHeaders)
 
@@ -95,6 +104,8 @@ export class StreamManager<Context extends unknown> {
   }
 
   closeAllStreams() {
+    this.#isClosed = true
+
     for (const response of this.#responses) {
       response.destroy()
     }

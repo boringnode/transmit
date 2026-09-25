@@ -173,6 +173,31 @@ test.group('Transmit', () => {
     transmit.closeAllStreams()
   })
 
+  test('should reject streams created after all streams are closed', async ({ assert }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+    const socket = new Socket()
+    const request = new IncomingMessage(socket)
+    const response = new ServerResponse(request)
+    response.assignSocket(socket)
+    const responseErrors: Error[] = []
+    socket.on('error', (error) => responseErrors.push(error))
+    response.on('error', (error) => responseErrors.push(error))
+    const uid = randomUUID()
+
+    transmit.closeAllStreams()
+
+    const stream = transmit.createStream({ uid, request, response, context: {} })
+    const subscribed = await transmit.subscribe({ uid, channel: 'news' })
+
+    assert.isTrue(response.destroyed)
+    assert.isTrue(socket.destroyed)
+    assert.isTrue(stream.destroyed)
+    assert.isFalse(subscribed)
+    assert.deepEqual(responseErrors, [])
+  })
+
   test('should close all open streams during shutdown', async ({ assert }) => {
     const transmit = new Transmit({
       transport: null,

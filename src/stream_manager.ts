@@ -60,6 +60,8 @@ export interface UnsubscribeParams<Context> {
 export class StreamManager<Context extends unknown> {
   #storage: Storage
 
+  #responses = new Set<ServerResponse>()
+
   #securedChannels = new Map<string, AccessCallback<any, any>>()
 
   constructor() {
@@ -79,15 +81,23 @@ export class StreamManager<Context extends unknown> {
     stream.pipe(response, undefined, injectResponseHeaders)
 
     this.#storage.add(stream)
+    this.#responses.add(response)
 
     onConnect?.({ uid, context })
 
     response.on('close', () => {
+      this.#responses.delete(response)
       this.#storage.remove(stream)
       onDisconnect?.({ uid, context })
     })
 
     return stream
+  }
+
+  closeAllStreams() {
+    for (const response of this.#responses) {
+      response.destroy()
+    }
   }
 
   async subscribe({

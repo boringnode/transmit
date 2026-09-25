@@ -6,12 +6,28 @@
  */
 
 import { randomUUID } from 'node:crypto'
+import { IncomingMessage, ServerResponse } from 'node:http'
 import { test } from '@japa/runner'
 import { Transmit } from '../src/transmit.js'
 import { StreamManager } from '../src/stream_manager.js'
+import { Socket } from './mocks/socket.js'
 import { makeStream } from './fixtures/stream.js'
 import { TransportMessageType } from '../src/transport_message_type.js'
 import { makeTransmitWithTransport, makeTransport } from './fixtures/transmit.js'
+
+function makeConnectedStream(transmit: Transmit<unknown>) {
+  const socket = new Socket()
+  const request = new IncomingMessage(socket)
+  const response = new ServerResponse(request)
+  response.assignSocket(socket)
+
+  return transmit.createStream({
+    uid: randomUUID(),
+    request,
+    response,
+    context: {},
+  })
+}
 
 test.group('Transmit', () => {
   test('should return the manager instance', async ({ assert }) => {
@@ -130,6 +146,51 @@ test.group('Transmit', () => {
       done()
     }, 0)
   }).waitForDone()
+
+  test('should close all open streams and emit disconnect events', async ({ assert }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+    const stream1 = makeConnectedStream(transmit)
+    const stream2 = makeConnectedStream(transmit)
+    const disconnectedUids: string[] = []
+    const disconnected = new Promise<void>((resolve) => {
+      transmit.on('disconnect', ({ uid }) => {
+        disconnectedUids.push(uid)
+        if (disconnectedUids.length === 2) resolve()
+      })
+    })
+
+    await transmit.subscribe({ uid: stream1.getUid(), channel: 'news' })
+    await transmit.subscribe({ uid: stream2.getUid(), channel: 'news' })
+
+    transmit.closeAllStreams()
+    transmit.closeAllStreams()
+    await disconnected
+
+    assert.sameMembers(disconnectedUids, [stream1.getUid(), stream2.getUid()])
+    assert.deepEqual(transmit.getSubscribersFor('news'), [])
+    transmit.closeAllStreams()
+  })
+
+  test('should close all open streams during shutdown', async ({ assert }) => {
+    const transmit = new Transmit({
+      transport: null,
+    })
+    const stream = makeConnectedStream(transmit)
+    const disconnectedUids: string[] = []
+
+    transmit.on('disconnect', ({ uid }) => {
+      disconnectedUids.push(uid)
+    })
+    await transmit.subscribe({ uid: stream.getUid(), channel: 'news' })
+
+    await transmit.shutdown()
+    await new Promise<void>((resolve) => setImmediate(resolve))
+
+    assert.deepEqual(disconnectedUids, [stream.getUid()])
+    assert.deepEqual(transmit.getSubscribersFor('news'), [])
+  })
 
   test('should emit an subscribe event', async ({ assert }) => {
     assert.plan(3)

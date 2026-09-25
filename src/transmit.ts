@@ -107,6 +107,10 @@ export class Transmit<Context extends unknown> {
     })
   }
 
+  closeAllStreams() {
+    this.#manager.closeAllStreams()
+  }
+
   authorize<Params extends Record<string, string>>(
     channel: string,
     callback: AccessCallback<Context, Params>
@@ -188,6 +192,7 @@ export class Transmit<Context extends unknown> {
       clearInterval(this.#interval)
     }
 
+    this.closeAllStreams()
     await this.#bus?.disconnect()
   }
 

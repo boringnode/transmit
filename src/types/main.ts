@@ -20,12 +20,7 @@ export type Duration = number | string
  * A Broadcastable is a value that can be broadcasted to other clients
  */
 export type Broadcastable =
-  | { [key: string]: Broadcastable }
-  | string
-  | number
-  | boolean
-  | null
-  | Broadcastable[]
+  { [key: string]: Broadcastable } | string | number | boolean | null | Broadcastable[]
 
 export interface TransmitConfig {
   /**

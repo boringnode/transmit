@@ -33,7 +33,7 @@
   "dependencies": {
     "@boringnode/bus": "^0.9.2",
     "@poppinss/utils": "^7.1.1",
-    "emittery": "^1.2.1",
+    "emittery": "^2.1.0",
     "matchit": "^1.1.0"
   },
   "devDependencies": {

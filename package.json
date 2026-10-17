@@ -56,6 +56,10 @@
   },
   "author": "Romain Lanz <romain.lanz@pm.me>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boringnode/transmit"
+  },
   "keywords": [
     "sse",
     "server-sent-event",

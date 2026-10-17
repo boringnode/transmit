@@ -27,6 +27,11 @@ type TransmitMessage = {
   type: typeof TransportMessageType.Broadcast
   channel: string
   payload: Broadcastable
+  /**
+   * UIDs to skip on the receiving instances. Absent for plain broadcasts
+   * and for messages published by older versions.
+   */
+  exceptUids?: string | string[]
 }
 
 export class Transmit<Context extends unknown> {
@@ -71,7 +76,7 @@ export class Transmit<Context extends unknown> {
 
     // Subscribe to the transport channel and handle incoming messages
     void this.#bus?.subscribe<TransmitMessage>(this.#transportChannel, (message) => {
-      void this.#broadcastLocally(message.channel, message.payload)
+      this.#broadcastLocally(message.channel, message.payload, message.exceptUids)
     })
 
     // Start the ping interval if configured
@@ -161,7 +166,14 @@ export class Transmit<Context extends unknown> {
   }
 
   broadcastExcept(channel: string, payload: Broadcastable, senderUid: string | string[]) {
-    return this.#broadcastLocally(channel, payload, senderUid)
+    void this.#bus?.publish(this.#transportChannel, {
+      type: TransportMessageType.Broadcast,
+      channel,
+      payload,
+      exceptUids: senderUid,
+    } satisfies TransmitMessage)
+
+    this.#broadcastLocally(channel, payload, senderUid)
   }
 
   broadcast(channel: string, payload?: Broadcastable) {

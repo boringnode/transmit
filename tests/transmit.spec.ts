@@ -447,6 +447,31 @@ test.group('Transmit', () => {
     assert.isTrue(dataReceived)
   })
 
+  test('should broadcast to other instances except the excluded uids', async ({ assert }) => {
+    const transmit = makeTransmitWithTransport(makeTransport())
+    const transmit2 = makeTransmitWithTransport(makeTransport())
+
+    const sender = makeStream(transmit2)
+    const excluded = makeStream(transmit2)
+    const receiver = makeStream(transmit2)
+
+    for (const stream of [sender, excluded, receiver]) {
+      await transmit2.subscribe({ uid: stream.getUid(), channel: 'channel1' })
+    }
+
+    const received: string[] = []
+    for (const stream of [sender, excluded, receiver]) {
+      stream.on('data', (message: any) => {
+        if (message !== '\n') received.push(stream.getUid())
+      })
+    }
+
+    transmit.broadcastExcept('channel1', { message: 'hello' }, sender.getUid())
+    transmit.broadcastExcept('channel1', { message: 'hello' }, [sender.getUid(), excluded.getUid()])
+
+    assert.deepEqual(received, [excluded.getUid(), receiver.getUid(), receiver.getUid()])
+  })
+
   test('should broadcast falsy payloads without converting them to empty object', async ({
     assert,
   }) => {

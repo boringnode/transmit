@@ -85,6 +85,6 @@ export class Stream extends Transform {
     encoding?: BufferEncoding,
     cb?: (error: Error | null | undefined) => void
   ): boolean {
-    return this.write(message, encoding, cb)
+    return encoding ? this.write(message, encoding, cb) : this.write(message, cb)
   }
 }

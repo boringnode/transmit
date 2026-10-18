@@ -5,7 +5,7 @@
  * @copyright BoringNode
  */
 
-import type { TransportFactory } from '@boringnode/bus/types/main'
+import type { TransportFactory } from '@boringnode/bus/types/core'
 
 /**
  * A Duration can be a number in milliseconds or a string formatted as a duration

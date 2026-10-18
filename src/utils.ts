@@ -5,7 +5,7 @@
  * @copyright BoringNode
  */
 
-import { Broadcastable } from './types/main.js'
+import type { Broadcastable } from './types/main.js'
 
 export function dataToString(data: Broadcastable): string {
   if (typeof data === 'object') {

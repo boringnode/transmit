@@ -39,7 +39,7 @@
     "matchit": "^1.1.0"
   },
   "devDependencies": {
-    "@adonisjs/eslint-config": "^2.1.2",
+    "@adonisjs/eslint-config": "^3.1.0",
     "@adonisjs/prettier-config": "^1.5.0",
     "@adonisjs/tsconfig": "^2.0.0",
     "@japa/assert": "^4.2.0",
@@ -47,14 +47,13 @@
     "@release-it/conventional-changelog": "^12.0.2",
     "@swc/core": "^1.16.18",
     "@types/node": "^20.19.43",
-    "c8": "^10.1.3",
-    "del-cli": "^7.0.0",
-    "eslint": "^9.39.5",
+    "c8": "^12.0.0",
+    "del-cli": "^8.0.1",
+    "eslint": "^10.13.0",
     "prettier": "^3.9.10",
-    "release-it": "^19.2.4",
+    "release-it": "^21.1.1",
     "ts-node-maintained": "^10.9.6",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "author": "Romain Lanz <romain.lanz@pm.me>",
   "license": "MIT",
@@ -107,7 +106,7 @@
     ]
   },
   "volta": {
-    "node": "20.11.1"
+    "node": "24.22.0"
   },
   "packageManager": "yarn@4.18.1"
 }

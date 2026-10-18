@@ -6,7 +6,7 @@
  */
 
 import matchit from 'matchit'
-import { Stream } from './stream.js'
+import type { Stream } from './stream.js'
 import type { Route } from 'matchit'
 
 export class Storage {

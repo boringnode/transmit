@@ -128,7 +128,7 @@ __metadata:
     "@types/node": "npm:^20.19.43"
     c8: "npm:^12.0.0"
     del-cli: "npm:^8.0.1"
-    emittery: "npm:^1.2.1"
+    emittery: "npm:^2.2.0"
     eslint: "npm:^10.13.0"
     matchit: "npm:^1.1.0"
     prettier: "npm:^3.9.10"
@@ -2227,10 +2227,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"emittery@npm:^1.2.0, emittery@npm:^1.2.1":
+"emittery@npm:^1.2.0":
   version: 1.2.1
   resolution: "emittery@npm:1.2.1"
   checksum: 10c0/188f6ee8725589df6d49a8ed18b216709dfda3574547860c122bc0223570d839bb2c8ca5cd95483a6b064636af195d7c6ab99a35a317f9734d8bc455f644c785
+  languageName: node
+  linkType: hard
+
+"emittery@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "emittery@npm:2.2.0"
+  checksum: 10c0/0ac98b7925833a6dcdbd0e460f85f042054e0e9dcc38efc4adacd3a8e3d45ed3650a95c18414560f893415d94cf0feaee22718292e5c1c165191605397ef5890
   languageName: node
   linkType: hard
 

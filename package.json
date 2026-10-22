@@ -35,7 +35,7 @@
   "dependencies": {
     "@boringnode/bus": "^0.10.0",
     "@poppinss/utils": "^7.1.2",
-    "emittery": "^1.2.1",
+    "emittery": "^2.2.0",
     "matchit": "^1.1.0"
   },
   "devDependencies": {

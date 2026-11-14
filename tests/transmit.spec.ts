@@ -472,6 +472,70 @@ test.group('Transmit', () => {
     assert.deepEqual(received, [excluded.getUid(), receiver.getUid(), receiver.getUid()])
   })
 
+  test('should subscribe and unsubscribe a stream held by another instance', async ({ assert }) => {
+    const transmit = makeTransmitWithTransport(makeTransport())
+    const holder = makeTransmitWithTransport(makeTransport())
+    const stream = makeStream(holder)
+
+    // The receiving instance authorizes; the holder must not ask again.
+    transmit.authorize('relayed', () => true)
+    holder.authorize('relayed', () => false)
+
+    const events: string[] = []
+    transmit.on('subscribe', ({ context }) => events.push(`receiver:${context}`))
+    holder.on('subscribe', ({ context }) => events.push(`holder:${context}`))
+
+    // Watches the channel that older versions broadcast to clients.
+    const broadcastChannel = makeTransport().transport.setId('observer')
+    const broadcastMessages: unknown[] = []
+    await broadcastChannel.subscribe('transmit::broadcast', (message) => {
+      broadcastMessages.push(message)
+    })
+
+    const received: unknown[] = []
+    stream.on('data', (message: any) => {
+      if (message !== '\n') received.push(message)
+    })
+
+    const subscribed = await transmit.subscribe({
+      uid: stream.getUid(),
+      channel: 'relayed',
+      context: 'request',
+    })
+    assert.isTrue(subscribed)
+    transmit.broadcast('relayed', { message: 'first' })
+
+    assert.isTrue(await transmit.unsubscribe({ uid: stream.getUid(), channel: 'relayed' }))
+    transmit.broadcast('relayed', { message: 'second' })
+
+    await broadcastChannel.disconnect()
+
+    assert.lengthOf(received, 1)
+    assert.include(String(received[0]), 'first')
+    assert.deepEqual(holder.getSubscribersFor('relayed'), [])
+    assert.deepEqual(events, ['receiver:request'])
+    assert.lengthOf(broadcastMessages, 2)
+    assert.notInclude(JSON.stringify(broadcastMessages), stream.getUid())
+  })
+
+  test('should not relay a subscription the receiving instance refuses', async ({ assert }) => {
+    const transmit = makeTransmitWithTransport(makeTransport())
+    const holder = makeTransmitWithTransport(makeTransport())
+    const stream = makeStream(holder)
+
+    transmit.authorize('private', () => false)
+    holder.authorize('private', () => true)
+
+    assert.isFalse(await transmit.subscribe({ uid: stream.getUid(), channel: 'private' }))
+    assert.deepEqual(holder.getSubscribersFor('private'), [])
+  })
+
+  test('should refuse a stream it does not hold without a transport', async ({ assert }) => {
+    const transmit = new Transmit({ transport: null })
+
+    assert.isFalse(await transmit.subscribe({ uid: randomUUID(), channel: 'channel1' }))
+  })
+
   test('should broadcast falsy payloads without converting them to empty object', async ({
     assert,
   }) => {

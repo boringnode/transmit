@@ -34,6 +34,17 @@ type TransmitMessage = {
   exceptUids?: string | string[]
 }
 
+/**
+ * A subscription change for a stream that another instance holds. It goes on
+ * its own bus channel, which older versions do not listen to: they would
+ * broadcast it to the channel as a message.
+ */
+type SubscriptionMessage = {
+  type: typeof TransportMessageType.Subscribe | typeof TransportMessageType.Unsubscribe
+  uid: string
+  channel: string
+}
+
 export class Transmit<Context extends unknown> {
   /**
    * The configuration for the transmit instance
@@ -50,6 +61,12 @@ export class Transmit<Context extends unknown> {
    * across multiple instance.
    */
   readonly #transportChannel: string
+
+  /**
+   * The transport channel that relays subscriptions to the instance that
+   * holds the stream.
+   */
+  readonly #subscriptionChannel: string
 
   /**
    * The transport provider to synchronize messages and subscriptions
@@ -73,10 +90,25 @@ export class Transmit<Context extends unknown> {
     this.#emittery = new Emittery()
     this.#bus = transport ? new Bus(transport, { retryQueue: { enabled: true } }) : null
     this.#transportChannel = this.#config.transport?.channel ?? 'transmit::broadcast'
+    this.#subscriptionChannel = `${this.#transportChannel}::subscriptions`
 
     // Subscribe to the transport channel and handle incoming messages
     void this.#bus?.subscribe<TransmitMessage>(this.#transportChannel, (message) => {
       this.#broadcastLocally(message.channel, message.payload, message.exceptUids)
+    })
+
+    // Apply the subscriptions that another instance authorized for a stream
+    // this one may hold. An instance that does not hold it ignores them.
+    void this.#bus?.subscribe<SubscriptionMessage>(this.#subscriptionChannel, (message) => {
+      if (message.type === TransportMessageType.Subscribe) {
+        void this.#manager.subscribe({
+          uid: message.uid,
+          channel: message.channel,
+          skipAuthorization: true,
+        })
+      } else {
+        void this.#manager.unsubscribe({ uid: message.uid, channel: message.channel })
+      }
     })
 
     // Start the ping interval if configured
@@ -123,20 +155,40 @@ export class Transmit<Context extends unknown> {
     this.#manager.authorize(channel, callback)
   }
 
-  subscribe(params: Omit<SubscribeParams<Context>, 'onSubscribe'>) {
-    return this.#manager.subscribe({
-      ...params,
-      onSubscribe: ({ uid, channel, context }) => {
-        void this.#emittery.emit('subscribe', {
-          uid,
-          channel,
-          context,
-        })
-      },
-    })
+  /**
+   * Subscribes a stream to a channel. With a transport, the request may reach
+   * an instance that does not hold the stream: this instance authorizes it and
+   * relays it to the others, so it returns true without knowing whether any
+   * instance holds the stream.
+   */
+  async subscribe({
+    uid,
+    channel,
+    context,
+    skipAuthorization,
+  }: Omit<SubscribeParams<Context>, 'onSubscribe'>) {
+    if (!skipAuthorization && !(await this.#manager.verifyAccess(channel, context!))) {
+      return false
+    }
+
+    const subscribed =
+      (await this.#manager.subscribe({ uid, channel, skipAuthorization: true })) ||
+      this.#relaySubscription(TransportMessageType.Subscribe, uid, channel)
+
+    if (subscribed) {
+      void this.#emittery.emit('subscribe', { uid, channel, context: context! })
+    }
+
+    return subscribed
   }
 
+  /**
+   * Unsubscribes a stream from a channel, on this instance and on the one
+   * that holds the stream.
+   */
   unsubscribe(params: Omit<UnsubscribeParams<Context>, 'onUnsubscribe'>) {
+    this.#relaySubscription(TransportMessageType.Unsubscribe, params.uid, params.channel)
+
     return this.#manager.unsubscribe({
       ...params,
       onUnsubscribe: ({ uid, channel, context }) => {
@@ -147,6 +199,20 @@ export class Transmit<Context extends unknown> {
         })
       },
     })
+  }
+
+  #relaySubscription(type: SubscriptionMessage['type'], uid: string, channel: string) {
+    if (!this.#bus) {
+      return false
+    }
+
+    void this.#bus.publish(this.#subscriptionChannel, {
+      type,
+      uid,
+      channel,
+    } satisfies SubscriptionMessage)
+
+    return true
   }
 
   #broadcastLocally(channel: string, payload: Broadcastable, senderUid?: string | string[]) {

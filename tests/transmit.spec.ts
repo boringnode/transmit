@@ -518,6 +518,30 @@ test.group('Transmit', () => {
     assert.notInclude(JSON.stringify(broadcastMessages), stream.getUid())
   })
 
+  test('should apply sequential changes in order through different instances', async ({
+    assert,
+  }) => {
+    const slowTransport = makeTransport()
+    const slow = makeTransmitWithTransport(slowTransport)
+    const fast = makeTransmitWithTransport(makeTransport())
+    const holder = makeTransmitWithTransport(makeTransport())
+    const stream = makeStream(holder)
+
+    // The slow instance takes 20ms to reach the bus.
+    const publish = slowTransport.transport.publish.bind(slowTransport.transport)
+    slowTransport.transport.publish = async (channel, message) => {
+      await new Promise((resolve) => setTimeout(resolve, 20))
+      return publish(channel, message)
+    }
+
+    await holder.subscribe({ uid: stream.getUid(), channel: 'ordered' })
+    await slow.unsubscribe({ uid: stream.getUid(), channel: 'ordered' })
+    await fast.subscribe({ uid: stream.getUid(), channel: 'ordered' })
+    await new Promise((resolve) => setTimeout(resolve, 40))
+
+    assert.deepEqual(holder.getSubscribersFor('ordered'), [stream.getUid()])
+  })
+
   test('should not relay a subscription the receiving instance refuses', async ({ assert }) => {
     const transmit = makeTransmitWithTransport(makeTransport())
     const holder = makeTransmitWithTransport(makeTransport())

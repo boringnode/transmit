@@ -173,7 +173,7 @@ export class Transmit<Context extends unknown> {
 
     const subscribed =
       (await this.#manager.subscribe({ uid, channel, skipAuthorization: true })) ||
-      this.#relaySubscription(TransportMessageType.Subscribe, uid, channel)
+      (await this.#relaySubscription(TransportMessageType.Subscribe, uid, channel))
 
     if (subscribed) {
       void this.#emittery.emit('subscribe', { uid, channel, context: context! })
@@ -186,8 +186,8 @@ export class Transmit<Context extends unknown> {
    * Unsubscribes a stream from a channel, on this instance and on the one
    * that holds the stream.
    */
-  unsubscribe(params: Omit<UnsubscribeParams<Context>, 'onUnsubscribe'>) {
-    this.#relaySubscription(TransportMessageType.Unsubscribe, params.uid, params.channel)
+  async unsubscribe(params: Omit<UnsubscribeParams<Context>, 'onUnsubscribe'>) {
+    await this.#relaySubscription(TransportMessageType.Unsubscribe, params.uid, params.channel)
 
     return this.#manager.unsubscribe({
       ...params,
@@ -201,12 +201,17 @@ export class Transmit<Context extends unknown> {
     })
   }
 
-  #relaySubscription(type: SubscriptionMessage['type'], uid: string, channel: string) {
+  /**
+   * Publishes a subscription change and waits until the transport has it, so
+   * a client that waits for the response before its next request gets its
+   * changes applied in order, even through different instances.
+   */
+  async #relaySubscription(type: SubscriptionMessage['type'], uid: string, channel: string) {
     if (!this.#bus) {
       return false
     }
 
-    void this.#bus.publish(this.#subscriptionChannel, {
+    await this.#bus.publish(this.#subscriptionChannel, {
       type,
       uid,
       channel,

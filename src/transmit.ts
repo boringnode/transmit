@@ -84,6 +84,12 @@ export class Transmit<Context extends unknown> {
    */
   readonly #interval: NodeJS.Timeout | undefined
 
+  /**
+   * Set once shutdown starts, so the transport subscriptions it cancels
+   * are not reported as failures.
+   */
+  #shuttingDown = false
+
   constructor(config: TransmitConfig, transport?: Transport | null) {
     this.#config = config
     this.#manager = new StreamManager<Context>()
@@ -92,24 +98,33 @@ export class Transmit<Context extends unknown> {
     this.#transportChannel = this.#config.transport?.channel ?? 'transmit::broadcast'
     this.#subscriptionChannel = `${this.#transportChannel}::subscriptions`
 
-    // Subscribe to the transport channel and handle incoming messages
-    void this.#bus?.subscribe<TransmitMessage>(this.#transportChannel, (message) => {
-      this.#broadcastLocally(message.channel, message.payload, message.exceptUids)
-    })
+    if (this.#bus) {
+      void Promise.all([
+        // Subscribe to the transport channel and handle incoming messages
+        this.#bus.subscribe<TransmitMessage>(this.#transportChannel, (message) => {
+          this.#broadcastLocally(message.channel, message.payload, message.exceptUids)
+        }),
 
-    // Apply the subscriptions that another instance authorized for a stream
-    // this one may hold. An instance that does not hold it ignores them.
-    void this.#bus?.subscribe<SubscriptionMessage>(this.#subscriptionChannel, (message) => {
-      if (message.type === TransportMessageType.Subscribe) {
-        void this.#manager.subscribe({
-          uid: message.uid,
-          channel: message.channel,
-          skipAuthorization: true,
-        })
-      } else {
-        void this.#manager.unsubscribe({ uid: message.uid, channel: message.channel })
-      }
-    })
+        // Apply the subscriptions that another instance authorized for a stream
+        // this one may hold. An instance that does not hold it ignores them.
+        this.#bus.subscribe<SubscriptionMessage>(this.#subscriptionChannel, (message) => {
+          if (message.type === TransportMessageType.Subscribe) {
+            void this.#manager.subscribe({
+              uid: message.uid,
+              channel: message.channel,
+              skipAuthorization: true,
+            })
+          } else {
+            void this.#manager.unsubscribe({ uid: message.uid, channel: message.channel })
+          }
+        }),
+      ]).catch((error) => {
+        // A shutdown before the transport is connected, as in a short CLI
+        // command, rejects the subscriptions still pending. They no longer
+        // matter then; any other failure still surfaces.
+        if (!this.#shuttingDown) throw error
+      })
+    }
 
     // Start the ping interval if configured
     if (this.#config.pingInterval) {
@@ -271,6 +286,8 @@ export class Transmit<Context extends unknown> {
   }
 
   async shutdown() {
+    this.#shuttingDown = true
+
     if (this.#interval) {
       clearInterval(this.#interval)
     }

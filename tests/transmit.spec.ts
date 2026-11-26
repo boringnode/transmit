@@ -472,6 +472,33 @@ test.group('Transmit', () => {
     assert.deepEqual(received, [excluded.getUid(), receiver.getUid(), receiver.getUid()])
   })
 
+  test('should shut down before the transport has subscribed', async ({ assert, cleanup }) => {
+    // Like the Redis transport before its connection is ready: subscriptions
+    // stay pending, and disconnecting rejects them.
+    const pending: Array<(error: Error) => void> = []
+    const transport = makeTransport().transport
+    transport.subscribe = () => new Promise((_, reject) => pending.push(reject))
+    let cancelled = 0
+    transport.disconnect = async () => {
+      for (const reject of pending) {
+        reject(new Error('Connection is closed.'))
+        cancelled++
+      }
+    }
+
+    const unhandled: unknown[] = []
+    const onUnhandled = (reason: unknown) => unhandled.push(reason)
+    process.on('unhandledRejection', onUnhandled)
+    cleanup(() => void process.off('unhandledRejection', onUnhandled))
+
+    const transmit = new Transmit({ transport: null }, transport)
+    await transmit.shutdown()
+    await new Promise((resolve) => setImmediate(resolve))
+
+    assert.equal(cancelled, 2)
+    assert.deepEqual(unhandled, [])
+  })
+
   test('should subscribe and unsubscribe a stream held by another instance', async ({ assert }) => {
     const transmit = makeTransmitWithTransport(makeTransport())
     const holder = makeTransmitWithTransport(makeTransport())
